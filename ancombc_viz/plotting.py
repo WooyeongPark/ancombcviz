@@ -3,11 +3,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-
-
 def plot_group_bar(
         anc_control,
-        covariate_value="Group[T.mmilow]",
+        group="mmilow",
+        ref_group="mmihigh",
         top_n=30,
         fc_cut=0.0,
         top_name_map=None,
@@ -37,6 +36,9 @@ def plot_group_bar(
     -----------
     ax: matplotlib.axes.Axes
     """
+
+    covariate_value = f"Group[T.{group}]"
+
     vi = anc_control.reset_index()
     # covariate_value use.
     low_rows = vi[vi["Covariate"] == covariate_value].copy()
@@ -46,11 +48,11 @@ def plot_group_bar(
     # fc_cut은 factor use.
     def label_cat(row):
         if row["Signif"] and row["log2FC"] > fc_cut:
-            return "mmilow_enriched"
-        if row["Signif"] and row["log2FC"] < -fc_cut:
-            return "mmihigh_enriched"
+            return f"{group}"
+        elif row["Signif"] and row["log2FC"] < -fc_cut:
+            return f"{ref_group}"
         else:
-            return "nonsignficant"
+            return "nonsignificant"
     
     low_rows["category"] = low_rows.apply(label_cat, axis=1)   
 
@@ -70,16 +72,16 @@ def plot_group_bar(
 
     # I think this palette change. e.g. covariate_value.
     palette = {
-        "mmilow_enriched": "firebrick",      # + sign
-        "mmihigh_enriched": "royalblue",     # - sign 
-        "nonsignficant": "lightgray",
+        f"{group}": "#9fbccaa0",      # + sign
+        f"{ref_group}": "#326a81a0",     # - sign 
+        "nonsignificant": "lightgray",
     }
     
-    if ax in None:
+    if ax is None:
         N = top_n
-        plt.figure(figsize=(10, max(4, 0.3 * N)), dpi=300)
+        plt.figure(figsize=(2.5, N / 10 + 0.5), dpi=300)
         ax = plt.gca()
-
+    
     ax = sns.barplot(
         data=top,
         x="log2FC",
