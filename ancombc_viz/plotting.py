@@ -45,7 +45,7 @@ def plot_group_bar(
     
     low_rows.rename(columns={"Log2(FC)":"log2FC"}, inplace=True)
     
-    # fc_cut은 factor use.
+    # fc_cut is factor use.
     def label_cat(row):
         if row["Signif"] and row["log2FC"] > fc_cut:
             return f"{group}"
@@ -95,6 +95,9 @@ def plot_group_bar(
     ax.axvline(0, color="black", linewidth=1)
     ax.set_xlabel("Log2 fold change")
     ax.set_ylabel("Feature")
+    
+    for tick in ax.get_yticklabels():
+        tick.set_fontstyle("italic")
 
-    # legend 정리
+    # legend
     ax.legend(frameon=True, bbox_to_anchor=(1.02, 1), loc="upper left")

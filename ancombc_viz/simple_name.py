@@ -14,23 +14,23 @@ def extract_p_g_or_f(top: str) -> str:
 
     stripped = top.strip()
     last = parts[-1]
-    # 0) 완전히 "o__;f__;g__" 패턴으로 끝나는 경우 → p + c
+    # 0) End completely "o__;f__;g__" likes pattern → p + c
     if len(parts) >= 3 and parts[-3:] == ["o__", "f__", "g__"]:
         pg = ";".join(p + c)
 
-    # 1) "g__"로 끝나지만 genus 이름이 비어 있는 경우 → p + f
+    # 1) End to "g__", but genus name have empty space  → p + f
     elif last == "g__":
         pg = ";".join(p + f)
 
-    # 2) g__ 이름이 있고, 그걸로 끝나는 경우 → p + g (정상적인 genus)
+    # 2) Normal genus pattern ("g__" name included) → p + g 
     elif g and stripped.endswith(g[-1]):
         pg = ";".join(p + g)
 
-    # 3) g__는 없고 f__로 끝나는 경우 → p + c
+    # 3) Not included "g__", end at "f__"  → p + c
     elif (not g) and f and last.startswith("f__"):
         pg = ";".join(p + c)
 
-    # 기본: p + g (g가 없으면 p만)
+    # Normal: p + g (if doesn't have "g__", start with "p__")
     else:
         pg = ";".join(p + g)
 
